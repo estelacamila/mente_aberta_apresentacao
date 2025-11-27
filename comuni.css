@@ -610,6 +610,11 @@ header {
     font-size: 20px;
   }
 
+   .messages-container {
+    padding-bottom: 30px;
+}
+
+
   /* ✔ Ajuste da logo e header */
   header {
     height: 90px !important;
