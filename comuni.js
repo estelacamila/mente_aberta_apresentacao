@@ -1,19 +1,40 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // -------------------------
-  // IDENTIFICAÇÃO DO USUÁRIO
-  // -------------------------
+// ===============================
+// ALERTA MODERNO
+// ===============================
+function showAlert(msg, redirect = null) {
+  const overlay = document.getElementById("customAlert");
+  const alertMessage = document.getElementById("alertMessage");
+  const btn = document.getElementById("alertBtn");
+
+  alertMessage.textContent = msg;
+  overlay.style.display = "flex";
+
+  btn.onclick = () => {
+    overlay.style.display = "none";
+    if (redirect) {
+      window.location.href = redirect;
+    }
+  };
+}
+
+// ===============================
+// DOMContentLoaded
+// ===============================
+document.addEventListener("DOMContentLoaded", async () => {
   const usuario_id = localStorage.getItem("id");
   const usuario_nome = localStorage.getItem("nome");
 
+  // ===============================
+  // CHECAR LOGIN
+  // ===============================
   if (!usuario_id || !usuario_nome) {
-    alert("Você precisa fazer login primeiro!");
-    window.location.replace("./login.html");
+    showAlert("⚠️ Você precisa fazer login!", "./login.html");
     return;
   }
 
-  // -------------------------
+  // ===============================
   // ELEMENTOS DO CHAT
-  // -------------------------
+  // ===============================
   const chatContainer = document.getElementById("chatContainer");
   const messageInput = document.getElementById("messageInput");
   const sendButton = document.getElementById("sendButton");
@@ -24,40 +45,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function appendMessage(text, userName = "Usuário", id) {
-    const usuario = localStorage.getItem("id");
-    if (id == usuario) {
-      const msg = document.createElement("div");
-      msg.className = "message-dir";
+    const msg = document.createElement("div");
+    msg.className = id == usuario_id ? "message-dir" : "message-esq";
 
-      const bubble = document.createElement("div");
-      bubble.className = "bubble";
-      bubble.textContent = text;
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.textContent = text;
 
-      const info = document.createElement("div");
-      info.className = "message-info";
-      info.textContent = userName;
+    const info = document.createElement("div");
+    info.className = "message-info";
+    info.textContent = userName;
 
-      msg.appendChild(bubble);
-      msg.appendChild(info);
-      chatContainer.appendChild(msg);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    } else {
-      const msg = document.createElement("div");
-      msg.className = "message-esq";
-
-      const bubble = document.createElement("div");
-      bubble.className = "bubble";
-      bubble.textContent = text;
-
-      const info = document.createElement("div");
-      info.className = "message-info";
-      info.textContent = userName;
-
-      msg.appendChild(bubble);
-      msg.appendChild(info);
-      chatContainer.appendChild(msg);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
+    msg.appendChild(bubble);
+    msg.appendChild(info);
+    chatContainer.appendChild(msg);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
   }
 
   async function sendMessage() {
@@ -68,11 +70,14 @@ document.addEventListener("DOMContentLoaded", () => {
     messageInput.focus();
 
     try {
-      const res = await fetch("https://back-render-vpda.onrender.com/Comunidade/Mensagem", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ usuario_id, usuario_nome, mensagem: text }),
-      });
+      const res = await fetch(
+        "https://back-render-vpda.onrender.com/Comunidade/Mensagem",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ usuario_id, usuario_nome, mensagem: text }),
+        }
+      );
 
       if (res.ok) {
         appendMessage(text, usuario_nome, usuario_id);
@@ -94,9 +99,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadMessages() {
     try {
-      const res = await fetch("https://back-render-vpda.onrender.com/Comunidade/Mensagem");
+      const res = await fetch(
+        "https://back-render-vpda.onrender.com/Comunidade/Mensagem"
+      );
       const mensagens = await res.json();
-
       if (!Array.isArray(mensagens)) return;
 
       chatContainer.innerHTML = "";
@@ -115,9 +121,9 @@ document.addEventListener("DOMContentLoaded", () => {
   loadMessages();
   setInterval(loadMessages, 5000);
 
-  // -------------------------
+  // ===============================
   // BLOCO DE NOTAS
-  // -------------------------
+  // ===============================
   const notesModal = document.getElementById("notesModal");
   const openNotesBtn = document.getElementById("openNotesBtn");
   const closeModal = document.getElementById("closeModal");
@@ -152,10 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function createNote(nota) {
     const usuario_id = localStorage.getItem("id");
-    if (!usuario_id) {
-      alert("Você precisa estar logado para criar ou editar notas!");
-      return;
-    }
+    if (!usuario_id) return;
 
     const emptyMsg = notesContainer.querySelector(".empty-msg");
     if (emptyMsg) emptyMsg.remove();
@@ -166,30 +169,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const textarea = document.createElement("textarea");
     textarea.value = nota.conteudo || "";
 
-    // Se não estiver logado, desativa o campo
-    if (!usuario_id) {
-      textarea.disabled = true;
-    }
-
     const updateNote = debounce(async () => {
       if (!usuario_id) return;
 
       try {
-        // Criação de nova nota
         if (!nota.id && textarea.value.trim() !== "") {
           const res = await fetch("https://back-render-vpda.onrender.com/Notas", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              usuario_id,
-              conteudo: textarea.value,
-            }),
+            body: JSON.stringify({ usuario_id, conteudo: textarea.value }),
           });
           const novaNota = await res.json();
           nota.id = novaNota.id;
-        }
-        // Atualização
-        else if (nota.id) {
+        } else if (nota.id) {
           await fetch(`https://back-render-vpda.onrender.com/Notas/${nota.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -250,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
   addNoteBtn.addEventListener("click", () => {
     const usuario_id = localStorage.getItem("id");
     if (!usuario_id) {
-      alert("Você precisa fazer login para criar notas!");
+      showAlert("Você precisa fazer login para criar notas!", "./login.html");
       return;
     }
     createNote({});

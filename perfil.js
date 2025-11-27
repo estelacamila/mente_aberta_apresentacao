@@ -10,19 +10,19 @@ const concluidoBtn = document.querySelector('.botao-concluido');
 // ======================================
 //            ALERTA MODERNO
 // ======================================
-function showAlert(msg) {
+function showAlert(msg, redirect = null) {
   const overlay = document.getElementById("customAlert");
   const alertMessage = document.getElementById("alertMessage");
   const btn = document.getElementById("alertBtn");
 
   alertMessage.textContent = msg;
-
-  // Mostra
   overlay.style.display = "flex";
 
-  // Garante que o botão feche SEM BUGAR
   btn.onclick = () => {
     overlay.style.display = "none";
+    if (redirect) {
+      window.location.href = redirect;
+    }
   };
 }
 
@@ -37,11 +37,13 @@ let userId = null;
 document.addEventListener('DOMContentLoaded', async () => {
   userId = localStorage.getItem('id');
 
+  // SE NÃO TIVER LOGIN → ALERTA COM REDIRECIONAMENTO
   if (!userId) {
-    showAlert('⚠️ Faça login novamente.');
+    showAlert('⚠️ Você deve estar logado para acessar o perfil.', './login.html');
     return;
   }
 
+  // BUSCAR DADOS DO PERFIL
   try {
     const response = await fetch(`https://back-render-vpda.onrender.com/Perfil/${userId}`);
 
