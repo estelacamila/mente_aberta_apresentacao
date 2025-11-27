@@ -555,100 +555,76 @@ header {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* RESPONSIVIDADE GERAL */
+/* 📱 RESPONSIVIDADE DO CHAT PARA CELULAR */
 @media (max-width: 768px) {
-  header {
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 10px;
+
+  /* 🔥 Remove afastamento absurdo que quebrava tudo no celular */
+  .message-dir {
+    padding-right: 0 !important;
   }
 
-  header .logo img {
-    width: 90px;
-    height: 90px;
-  }
-  
-
-  header .menu svg {
-    width: 28px;
-    height: 28px;
+  .message-esq {
+    margin-left: 0 !important;
+    max-width: 85%;
   }
 
-  .chat-container {
-    padding: 15px;
-    padding-bottom: 140px; /* espaço para input fixo */
-    flex: 1;
-    overflow-y: auto;
-  }
-
-  .chat-input {
-    width: calc(100% - 30px);
-    max-width: none;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px;
-  }
-
-  .chat-input input {
+  /* Ajuste das mensagens */
+  .bubble {
+    max-width: 85%;
     font-size: 14px;
     padding: 10px 14px;
   }
 
-  #sendButton {
-    width: 45px;
-    height: 45px;
-    font-size: 18px;
+  .message .avatar {
+    width: 35px;
+    height: 35px;
   }
 
-  .open-notes-btn {
-    width: 50px;
-    height: 50px;
-    font-size: 28px;
-    bottom: 80px;
-    right: 15px;
+  .chat-container {
+    padding: 10px;
+    padding-bottom: 150px;
+    gap: 15px;
   }
 
-  .modal-content {
+  /* 🔥 Área para digitar mais compacta e perfeita no mobile */
+  .chat-input {
+    bottom: 10px;
     width: 95%;
-    max-width: 95%;
-    padding: 20px;
-  }
-
-  .notes-container {
+    padding: 10px 15px;
+    border-radius: 25px;
     gap: 10px;
   }
 
-  .note {
-    width: 130px;
-    height: 130px;
+  .chat-input input {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  #sendButton {
+    width: 42px;
+    height: 42px;
+    font-size: 17px;
   }
 }
 
-/* RESPONSIVIDADE MUITO PEQUENA */
-@media (max-width: 400px) {
-  header .logo img {
-    width: 60px;
-    height: 60px;
+
+/* 📱 Celulares muito pequenos */
+@media (max-width: 420px) {
+
+  .bubble {
+    max-width: 90%;
+    font-size: 13px;
   }
 
   .chat-input {
-    width: calc(100% - 20px);
-  }
-
-  .chat-input input {
-    font-size: 13px;
+    width: 92%;
     padding: 8px 12px;
   }
 
   #sendButton {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     font-size: 16px;
   }
-
-  .note {
-    width: 110px;
-    height: 110px;
-  }
 }
+
